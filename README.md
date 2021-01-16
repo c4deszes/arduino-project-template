@@ -40,4 +40,4 @@ The template uses [UNLICENSE](./LICENSE).
 
 ### Compile project
 
-1. Run `compile.sh` to compile the project, output will be located in 
+1. Run `compile.sh` to compile the project, output will be located in the `build` directory
