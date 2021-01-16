@@ -1,0 +1,43 @@
+name: build
+
+on:
+  push:
+    paths-ignore:
+    - '*.md'
+    - '**/*.md'
+    branches:
+    - master
+  pull_request: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Arduino CLI
+        uses: arduino/setup-arduino-cli@v1.1.1
+
+      - name: Cache Platform & Libraries
+        id: cache-arduino
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.arduino15
+            !~/.arduino15/staging
+            ~/Arduino/libraries
+          key: arduino-packages-${{ hashFiles('setup.sh') }}
+
+      - name: Setup Platform & Libraries
+        if: steps.cache-arduino.outputs.cache-hit != 'true'
+        run: sh setup.sh
+
+      - name: Assemble
+        run: sh ./compile.sh
+
+      - name: Archive package
+        uses: actions/upload-artifact@v2
+        with:
+          name: binary
+          path: build/
